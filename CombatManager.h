@@ -6,5 +6,6 @@ class CombatManager {
     public:
         static void runCombatEncounter(Character& c1, Character& c2);
     private:
-        static std::vector<Character*> determineCombatPriority(Character& c1, Character& c2);
+        struct CombatAction;
+        static void orderByCombatInitiative(std::vector<CombatAction>& actions);
 };

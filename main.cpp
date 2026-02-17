@@ -4,10 +4,10 @@
 
 int main() {
     Player p1("hero");
-    Enemy e1("trollboy", 1, 1, 1);
-    Enemy e2("trollman", 2, 2, 1);
-    Enemy e3("trollboss", 5, 3, 1);
-    Enemy e4("trollgirl", 1, 1, 1);
+    Enemy e1("trollboy", 1, 1, 1, 1);
+    Enemy e2("trollman", 2, 2, 2, 1);
+    Enemy e3("trollboss", 5, 10, 3, 1);
+    Enemy e4("trollgirl", 1, 1, 1, 1);
     
     // Combat test 1
     CombatManager::runCombatEncounter(p1, e1);

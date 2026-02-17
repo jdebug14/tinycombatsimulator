@@ -2,8 +2,9 @@
 #include <string>
 
 struct Character {
-    Character(const std::string& name, int hp, int ap, int dex);
+    Character(const std::string& name, int lvl, int hp, int ap, int dex);
     const std::string& getName() const;
+    int getLevel() const;
     int getHealthPoints() const;
     int getAttackPower() const;
     int getDexterity() const;
@@ -13,6 +14,7 @@ struct Character {
 
     private:
         std::string name;
+        int level;
         int health_points;
         int attack_power;
         int dexterity;
@@ -24,5 +26,5 @@ struct Player : Character {
 
 struct Enemy : Character {
     Enemy();
-    Enemy(const std::string& name, int hp, int ap, int dex);
+    Enemy(const std::string& name, int lvl, int hp, int ap, int dex);
 };

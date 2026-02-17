@@ -1,14 +1,26 @@
 #include "CombatManager.h"
 #include <iostream>
 #include <algorithm>
+#include <random>
 
-std::vector<Character*> CombatManager::determineCombatPriority(Character& c1, Character& c2) {
-    std::vector<Character*> combatPriority = { &c1, &c2 };
-    std::sort(combatPriority.begin(), combatPriority.end(),
-        [](Character* a, Character* b) {
-            return a->getDexterity() > b->getDexterity();
+struct CombatManager::CombatAction {
+    Character* actor;
+    Character* target;
+    int initiative;
+};
+
+int roll(int rangeStart, int rangeEnd) {
+    static std::random_device rd;
+    static std::mt19937 rng(rd());
+    std::uniform_int_distribution<int> dist(rangeStart,rangeEnd);
+    return dist(rng);
+}
+
+void CombatManager::orderByCombatInitiative(std::vector<CombatManager::CombatAction>& actions) {
+    std::sort(actions.begin(), actions.end(),
+        [](const CombatAction& a, const CombatAction& b) {
+            return a.initiative > b.initiative;
         });
-    return combatPriority;
 }
 
 void CombatManager::runCombatEncounter(Character& c1, Character& c2) {
@@ -21,12 +33,17 @@ void CombatManager::runCombatEncounter(Character& c1, Character& c2) {
     int turn = 0;
     while (c1.isAlive() && c2.isAlive()) {
         turn++;
-        auto cp = determineCombatPriority(c1, c2);
-        for (Character* character : cp) {
-            if (!character->isAlive()) continue;
-            Character* target = (character == &c1) ? &c2 : &c1;
+        std::vector<CombatAction> actions = { 
+            { &c1, &c2, c1.getDexterity() + roll(1, 6) },
+            { &c2, &c1, c2.getDexterity() + roll(1, 6) }
+        };
+        orderByCombatInitiative(actions);
+        for (const CombatAction& action : actions) {
+            Character* actor = action.actor;
+            Character* target = action.target;
+            if (!actor->isAlive()) continue;
             if (target->isAlive()) {
-                character->attack(*target, turn);
+                actor->attack(*target, turn);
             }
         }
     }
