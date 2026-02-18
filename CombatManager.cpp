@@ -25,14 +25,13 @@ void CombatManager::orderByCombatInitiative(std::vector<CombatManager::CombatAct
 
 void CombatManager::runCombatEncounter(Character& c1, Character& c2) {
     if (!c1.isAlive() || !c2.isAlive()) {
-        // TODO: throw exception here instead
-        std::cerr << "Invalid encounter: one or more characters is already dead.\n";
-        return;
+        throw InvalidCombatException("One or more characters are unable to fight.");
     }
 
     int turn = 0;
     while (c1.isAlive() && c2.isAlive()) {
         turn++;
+        // TODO: ideally something more elegant than a d6 roll, but it's enough to introduce some variance for now
         std::vector<CombatAction> actions = { 
             { &c1, &c2, c1.getDexterity() + roll(1, 6) },
             { &c2, &c1, c2.getDexterity() + roll(1, 6) }
