@@ -6,9 +6,9 @@
 
 class CombatManager {
     public:
-        class InvalidCombatException : public std::runtime_error {
+        class InvalidCombatException : public std::logic_error {
             public:
-                InvalidCombatException(const std::string& msg) : std::runtime_error(msg) {}
+                InvalidCombatException(const std::string& msg) : std::logic_error(msg) {}
         };
         static void runCombatEncounter(Character& c1, Character& c2);
     private:

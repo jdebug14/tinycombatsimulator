@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <iostream>
 
 struct Character {
     Character(const std::string& name, int lvl, int hp, int ap, int dex);
@@ -12,6 +13,8 @@ struct Character {
     void takeDamage(int d);
     bool isAlive() const;
 
+    friend std::ostream& operator<<(std::ostream& os, const Character& c);
+
     private:
         std::string name;
         int level;
@@ -22,9 +25,10 @@ struct Character {
 
 struct Player : Character {
     Player(const std::string& name);
+    Player(const std::string& name, int lvl, int hp, int ap, int dex);
 };
 
 struct Enemy : Character {
-    Enemy();
+    Enemy(const std::string& name);
     Enemy(const std::string& name, int lvl, int hp, int ap, int dex);
 };

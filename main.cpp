@@ -1,31 +1,39 @@
 #include "Character.h"
 #include "CombatManager.h"
 #include <iostream>
+#include <vector>
 
 int main() {
-    Player p1("hero");
-    Enemy e1("trollboy", 1, 1, 1, 1);
-    Enemy e2("trollman", 2, 2, 2, 1);
-    Enemy e3("trollboss", 5, 10, 3, 1);
-    Enemy e4("trollgirl", 1, 1, 1, 1);
+    std::string playerName;
+    std::cout << "What is your character's name: ";
+    std::getline(std::cin, playerName);
+    std::cout << "Welcome " << playerName << "! Get ready...\n\n\n";
 
-    try {
-        // Combat test 1
-        CombatManager::runCombatEncounter(p1, e1);
-        std::cout << "-------------------------------\n";
-        // Combat test 2
-        CombatManager::runCombatEncounter(p1, e2);
-        std::cout << "-------------------------------\n";
-        // Combat test 3
-        CombatManager::runCombatEncounter(p1, e3);
-        std::cout << "-------------------------------\n";
-        // Combat test 4
-        CombatManager::runCombatEncounter(p1, e4);
-        std::cout << "-------------------------------\n";
+    Player p1(playerName, 1, 10, 1, 1);
+    std::vector<Enemy> enemies { 
+        Enemy("trollboy"),
+        Enemy("trollman", 2, 2, 2, 1),
+        Enemy("trollboss", 5, 10, 3, 1),
+        Enemy("trollgirl")
+     };
+
+    int enemiesFought = 0;
+    while (p1.isAlive() && enemiesFought < enemies.size()) {
+        Enemy& enemy = enemies[enemiesFought];
+        std::cout << "Combat has begun!\n";
+        std::cout << "-----------------------------------------------\n";
+        std::cout << p1 << "\n***** VS *****\n\n" << enemy << "\n\n";
+        try {
+            CombatManager::runCombatEncounter(p1, enemy);
+            enemiesFought++;
+        } catch(const CombatManager::InvalidCombatException& e) {
+            std::cerr << e.what() << std::endl;
+        }
+        std::cout << "-----------------------------------------------\n\n";
     }
-    catch(CombatManager::InvalidCombatException e) {
-        std::cerr << e.what() << std::endl;
-    }
+
+    if (p1.isAlive()) std::cout << "You defeated all enemies!\n";
+    else std::cout << "Game Over.\n";
 
     return 0;
 }

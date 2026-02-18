@@ -8,7 +8,8 @@ Character::Character(const std::string& name, int lvl, int hp, int ap, int dex)
     attack_power(ap),
     dexterity(dex) {}
 Player::Player(const std::string& name) : Character(name, 1, 5, 1, 1) {}
-Enemy::Enemy() : Character("Creep", 1, 1, 1, 1) {}
+Player::Player(const std::string& name, int lvl, int hp, int ap, int dex) : Character(name, lvl, hp, ap, dex) {}
+Enemy::Enemy(const std::string& name) : Character(name, 1, 1, 1, 1) {}
 Enemy::Enemy(const std::string& name, int lvl, int hp, int ap, int dex) : Character(name, lvl, hp, ap, dex) {}
 
 const std::string& Character::getName() const {
@@ -45,4 +46,13 @@ void Character::attack(Character& target, int turn) {
     int damage = attack_power;
     target.takeDamage(damage);
     CombatLogger::logAttack(*this, turn, target, damage);
+}
+
+std::ostream& operator<<(std::ostream& os, const Character& c) {
+    os << "Name: " << c.name << "\n"
+       << "Level: " << c.level << "\n"
+       << "HP: " << c.health_points << "\n"
+       << "Attack: " << c.attack_power << "\n"
+       << "Dexterity: " << c.dexterity << "\n";
+    return os;
 }
