@@ -32,8 +32,8 @@ bool Character::isAlive() const {
     return healthPoints_ > 0;
 }
 
-void Character::takeDamage(int d) {
-    healthPoints_ -= d;
+void Character::takeDamage(int dmg) {
+    healthPoints_ -= dmg;
     if (healthPoints_ < 0) healthPoints_ = 0;
 }
 
@@ -57,6 +57,14 @@ std::ostream& operator<<(std::ostream& os, const Character& c) {
 Player::Player(const std::string& name) : Character(name, 1, 5, 1, 1) {}
 Player::Player(const std::string& name, int lvl, int hp, int ap, int dex) : Character(name, lvl, hp, ap, dex) {}
 
+void Player::gainExperience(int exp) {
+    if (!isAlive()) return;
+    experience_ += exp;
+    while (experience_ + exp >= experienceToNextLevel_) {
+        levelUp();
+    } 
+}
+
 void Player::levelUp() {
     if (!isAlive()) return;
     level_++;
@@ -65,14 +73,6 @@ void Player::levelUp() {
     dexterity_ += 1;
     experienceToNextLevel_ += 50;
     std::cout << name_ << " leveled up to " << level_ << "!\n";
-}
-
-void Player::gainExperience(int exp) {
-    if (!isAlive()) return;
-    experience_ += exp;
-    while (experience_ + exp >= experienceToNextLevel_) {
-        levelUp();
-    } 
 }
 
 // Enemy

@@ -11,10 +11,9 @@ struct Character {
     int getHealthPoints() const;
     int getAttackPower() const;
     int getDexterity() const;
-    void takeDamage(int d);
+    void takeDamage(int dmg);
     bool isAlive() const;
     void attack(Character& target, int turn);
-
 
     protected:
         std::string name_;
