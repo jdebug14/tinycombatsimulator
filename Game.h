@@ -8,5 +8,5 @@ class Game {
     private:
         std::optional<Player> player_;
 
-        void createPlayer();
+        Player& createPlayer();
 };

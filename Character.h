@@ -18,7 +18,8 @@ struct Character {
     protected:
         std::string name_;
         int level_;
-        int healthPoints_;
+        int maxHealthPoints_;
+        int currentHealthPoints_;
         int attackPower_;
         int dexterity_;
 
@@ -27,11 +28,10 @@ struct Character {
 
 struct Player : Character {
     Player(const std::string& name);
-    Player(const std::string& name, int lvl, int hp, int ap, int dex);
 
     int getExperience() const;
     int getExperienceToNextLevel() const;
-    void gainExperience(int exp);
+    void gainExperience(int xp);
     void levelUp();
 
     private:
@@ -42,7 +42,7 @@ struct Player : Character {
 
 struct Enemy : Character {
     Enemy(const std::string& name);
-    Enemy(const std::string& name, int lvl, int hp, int ap, int dex);
+    Enemy(const std::string& name, int lvl, int hp, int ap, int dex, int xp);
 
     int getExperienceGranted() const;
 

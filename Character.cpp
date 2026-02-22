@@ -1,10 +1,11 @@
 #include "Character.h"
-#include "CombatLogger.h"
+#include "EventLogger.h"
 
 Character::Character(const std::string& name, int lvl, int hp, int ap, int dex) 
     : name_(name),
     level_(lvl),
-    healthPoints_(hp),
+    maxHealthPoints_(hp),
+    currentHealthPoints_(hp),
     attackPower_(ap),
     dexterity_(dex) {}
 
@@ -13,7 +14,7 @@ const std::string& Character::getName() const {
 }
 
 int Character::getHealthPoints() const {
-    return healthPoints_;
+    return currentHealthPoints_;
 }
 
 int Character::getLevel() const {
@@ -29,38 +30,38 @@ int Character::getDexterity() const {
 }
 
 bool Character::isAlive() const {
-    return healthPoints_ > 0;
+    return currentHealthPoints_ > 0;
 }
 
 void Character::takeDamage(int dmg) {
-    healthPoints_ -= dmg;
-    if (healthPoints_ < 0) healthPoints_ = 0;
+    currentHealthPoints_ -= dmg;
+    if (currentHealthPoints_ < 0) currentHealthPoints_ = 0;
 }
 
 void Character::attack(Character& target, int turn) {
     if (!isAlive()) return;
     int damage = attackPower_;
     target.takeDamage(damage);
-    CombatLogger::logAttack(*this, turn, target, damage);
+    EventLogger::logAttack(*this, turn, target, damage);
 }
 
 std::ostream& operator<<(std::ostream& os, const Character& c) {
     os << "Name: " << c.name_ << "\n"
        << "Level: " << c.level_ << "\n"
-       << "HP: " << c.healthPoints_ << "\n"
+       << "HP: " << c.currentHealthPoints_ << "/" << c.maxHealthPoints_ << "\n"
        << "Attack: " << c.attackPower_ << "\n"
        << "Dexterity: " << c.dexterity_ << "\n";
     return os;
 }
 
 // Player
-Player::Player(const std::string& name) : Character(name, 1, 5, 1, 1) {}
-Player::Player(const std::string& name, int lvl, int hp, int ap, int dex) : Character(name, lvl, hp, ap, dex) {}
+Player::Player(const std::string& name) : Character(name, 1, 5, 1, 1), experience_(0), experienceToNextLevel_(10) {}
 
-void Player::gainExperience(int exp) {
+void Player::gainExperience(int xp) {
     if (!isAlive()) return;
-    experience_ += exp;
-    while (experience_ + exp >= experienceToNextLevel_) {
+    EventLogger::logExperienceGain(*this, xp);
+    experience_ += xp;
+    while (experience_ >= experienceToNextLevel_) {
         levelUp();
     } 
 }
@@ -68,16 +69,17 @@ void Player::gainExperience(int exp) {
 void Player::levelUp() {
     if (!isAlive()) return;
     level_++;
-    healthPoints_ += 3;
+    maxHealthPoints_ += 3;
+    currentHealthPoints_ = maxHealthPoints_;
     attackPower_ += 1;
     dexterity_ += 1;
-    experienceToNextLevel_ += 50;
-    std::cout << name_ << " leveled up to " << level_ << "!\n";
+    experienceToNextLevel_ += 10;
+    EventLogger::logLevelUp(*this);
 }
 
 // Enemy
-Enemy::Enemy(const std::string& name) : Character(name, 1, 1, 1, 1) {}
-Enemy::Enemy(const std::string& name, int lvl, int hp, int ap, int dex) : Character(name, lvl, hp, ap, dex) {}
+Enemy::Enemy(const std::string& name) : Character(name, 1, 1, 1, 1), experienceGranted_(5) {}
+Enemy::Enemy(const std::string& name, int lvl, int hp, int ap, int dex, int xp) : Character(name, lvl, hp, ap, dex), experienceGranted_(xp) {}
 
 int Enemy::getExperienceGranted() const {
     return experienceGranted_;
