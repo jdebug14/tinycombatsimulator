@@ -32,7 +32,7 @@
                 "-fdiagnostics-color=always",
                 "-g",
                 "-std=c++17",
-                "${workspaceFolder}/main_server.cpp",
+                "${workspaceFolder}/test_server.cpp",
                 "-o",
                 "${workspaceFolder}/build/server"
             ],
@@ -56,7 +56,7 @@
                 "-fdiagnostics-color=always",
                 "-g",
                 "-std=c++17",
-                "${workspaceFolder}/main_client.cpp",
+                "${workspaceFolder}/test_client.cpp",
                 "-o",
                 "${workspaceFolder}/build/client"
             ],

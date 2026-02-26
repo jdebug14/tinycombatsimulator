@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -16,8 +17,14 @@ int main() {
         std::cerr << "Connection failed\n";
         return 1;
     }
-
     std::cout << "Connected to server\n";
+
+    const char* message = "PING";
+    send(sock, message, strlen(message), 0);
+
+    char buffer[1024] = {0};
+    recv(sock, buffer, sizeof(buffer), 0);
+    std::cout << "Received: " << buffer << std::endl;
 
     close(sock);
 
