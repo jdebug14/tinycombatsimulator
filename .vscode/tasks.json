@@ -1,0 +1,116 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "build game",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-std=c++17",
+                "${workspaceFolder}/game/*.cpp",
+                "-o",
+                "${workspaceFolder}/build/game"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Compiles all game source files and links into build/game"
+        },
+        {
+            "type": "cppbuild",
+            "label": "build server",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-std=c++17",
+                "${workspaceFolder}/main_server.cpp",
+                "-o",
+                "${workspaceFolder}/build/server"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Compiles server files and links into build/server"
+        },
+        {
+            "type": "cppbuild",
+            "label": "build client",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-std=c++17",
+                "${workspaceFolder}/main_client.cpp",
+                "-o",
+                "${workspaceFolder}/build/client"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Compiles client files and links into build/client"
+        },
+        {
+            "type": "shell",
+            "label": "run game",
+            "command": "${workspaceFolder}/build/game",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "build game"
+            ],
+            "detail": "Runs the compiled executable"
+        },
+        {
+            "type": "shell",
+            "label": "run server",
+            "command": "${workspaceFolder}/build/server",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "build server"
+            ],
+            "detail": "Runs the compiled executable"
+        },
+        {
+            "type": "shell",
+            "label": "run client",
+            "command": "${workspaceFolder}/build/client",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "build client"
+            ],
+            "detail": "Runs the compiled executable"
+        }
+    ],
+    "version": "2.0.0"
+}

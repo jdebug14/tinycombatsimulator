@@ -20,6 +20,7 @@ This project represents intentional repetition and iteration toward that goal.
 - [ ] Memory management
 - [ ] Smart pointers
 - [ ] Unit testing
+- [ ] Multi-threading
 
 ## Architecture Highlights
 
