@@ -2,7 +2,7 @@
 
 A simple text-based combat simulator.
 
-## GoalS
+## Goals
 After several years working primarily in higher-level languages, I wanted to re-enforce strong C++ fundamentals and instincts.
 This project represents intentional repetition and iteration toward that goal.
 - [x] Object-oriented design and clear behavior ownership
@@ -20,6 +20,7 @@ This project represents intentional repetition and iteration toward that goal.
 - [ ] Memory management
 - [ ] Smart pointers
 - [ ] Unit testing
+- [ ] Client-server
 - [ ] Multi-threading
 
 ## Architecture Highlights

@@ -5,6 +5,24 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+enum ReceiveResult {
+    Message,
+    Disconnect,
+    Error
+};
+
+ReceiveResult receiveMessage(int fd, std::string& out) {
+    char buffer[1024] = {0};
+    int bytesReceived = recv(fd, buffer, sizeof(buffer), 0);
+    if (bytesReceived == 0) {
+        return ReceiveResult::Disconnect;
+    } else if (bytesReceived < 0) {
+        return ReceiveResult::Error;
+    }
+    out.assign(buffer, bytesReceived);
+    return ReceiveResult::Message;
+}
+
 std::string handleCommand(const std::string& message) {
     if (message == "PING") {
         return "PONG";
@@ -52,19 +70,17 @@ int main() {
     }
 
     while (true) {
-        char buffer[1024] = {0};
-        int bytesReceived = recv(client_fd, buffer, sizeof(buffer), 0);
-        if (bytesReceived == 0) {
+        std::string clientMessage;
+        ReceiveResult result = receiveMessage(client_fd, clientMessage);
+        if (result == ReceiveResult::Disconnect) {
             std::cout << "Client disconnected\n";
             break;
-        } else if (bytesReceived < 0) {
+        } else if (result == ReceiveResult::Error) {
             std::cerr << "Receive failed\n";
-            return 1;
+            break;
         }
-        std::string message(buffer, bytesReceived);
-        std::cout << "Received: " << message << std::endl;
-        
-        std::string reply = handleCommand(message);
+        std::cout << "Received: " << clientMessage << std::endl;
+        std::string reply = handleCommand(clientMessage);
         send(client_fd, reply.c_str(), reply.size(), 0);
     }
 
