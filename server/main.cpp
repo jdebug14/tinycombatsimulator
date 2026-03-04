@@ -1,3 +1,4 @@
+#include "RequestHandler.h"
 #include <iostream>
 #include <cstring>
 #include <string>
@@ -21,16 +22,6 @@ ReceiveResult receiveMessage(int fd, std::string& out) {
     }
     out.assign(buffer, bytesReceived);
     return ReceiveResult::Message;
-}
-
-std::string handleCommand(const std::string& message) {
-    if (message == "PING") {
-        return "PONG";
-    } else if (message == "PLAYER_STATUS") {
-        return "ALIVE";
-    } else {
-        return "UNKNOWN COMMAND";
-    }
 }
 
 int main() {
@@ -71,7 +62,7 @@ int main() {
 
     while (true) {
         std::string clientMessage;
-        ReceiveResult result = receiveMessage(client_fd, clientMessage);
+        auto result = receiveMessage(client_fd, clientMessage);
         if (result == ReceiveResult::Disconnect) {
             std::cout << "Client disconnected\n";
             break;
@@ -80,7 +71,8 @@ int main() {
             break;
         }
         std::cout << "Received: " << clientMessage << std::endl;
-        std::string reply = handleCommand(clientMessage);
+        RequestType rqst = parseRequest(clientMessage);
+        std::string reply = handleRequest(rqst);
         send(client_fd, reply.c_str(), reply.size(), 0);
     }
 
