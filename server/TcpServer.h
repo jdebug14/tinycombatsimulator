@@ -14,5 +14,6 @@ private:
         Error
     };
 
+    void handleClient(int clientfd); 
     static ReceiveResult receiveMessage(int clientfd, std::string& out);
 };

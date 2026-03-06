@@ -39,11 +39,20 @@ void TcpServer::run() {
 
     sockaddr_in client_address{};
     socklen_t client_len = sizeof(client_address);
-    int client_fd = accept(serverfd_, (sockaddr*)&client_address, &client_len);
+    char ip[INET_ADDRSTRLEN];
 
     while (true) {
+        int clientfd = accept(serverfd_, (sockaddr*)&client_address, &client_len);
+        inet_ntop(AF_INET, &client_address.sin_addr, ip, sizeof(ip));
+        std::cout << "Client connected: " << ip << "\n";
+        TcpServer::handleClient(clientfd);
+    }
+}
+
+void TcpServer::handleClient(int clientfd) {
+    while (true) {
         std::string clientMessage;
-        ReceiveResult result = TcpServer::receiveMessage(client_fd, clientMessage);
+        ReceiveResult result = TcpServer::receiveMessage(clientfd, clientMessage);
         if (result == ReceiveResult::Disconnect) {
             std::cout << "Client disconnected\n";
             break;
@@ -51,11 +60,12 @@ void TcpServer::run() {
             std::cerr << "Receive failed\n";
             break;
         }
-        std::cout << "Received: " << clientMessage << std::endl;
+        std::cout << "Received: " << clientMessage << "\n";
         RequestType rqst = parseRequest(clientMessage);
         std::string reply = handleRequest(rqst);
-        send(client_fd, reply.c_str(), reply.size(), 0);
+        send(clientfd, reply.c_str(), reply.size(), 0);
     }
+    close(clientfd);
 }
 
 TcpServer::ReceiveResult TcpServer::receiveMessage(int clientfd, std::string& out) {
