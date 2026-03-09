@@ -1,9 +1,6 @@
 #include "TcpServer.h"
-#include "RequestHandler.h"
+#include "ClientSession.h"
 #include <iostream>
-#include <cstring>
-#include <arpa/inet.h>
-#include <sys/socket.h>
 #include <unistd.h>
 
 TcpServer::TcpServer(int port) {
@@ -37,45 +34,15 @@ void TcpServer::run() {
     }
     std::cout << "Server listening...\n";
 
-    sockaddr_in client_address{};
-    socklen_t client_len = sizeof(client_address);
-    char ip[INET_ADDRSTRLEN];
-
     while (true) {
-        int clientfd = accept(serverfd_, (sockaddr*)&client_address, &client_len);
-        inet_ntop(AF_INET, &client_address.sin_addr, ip, sizeof(ip));
-        std::cout << "Client connected: " << ip << "\n";
-        TcpServer::handleClient(clientfd);
-    }
-}
-
-void TcpServer::handleClient(int clientfd) {
-    while (true) {
-        std::string clientMessage;
-        ReceiveResult result = TcpServer::receiveMessage(clientfd, clientMessage);
-        if (result == ReceiveResult::Disconnect) {
-            std::cout << "Client disconnected\n";
-            break;
-        } else if (result == ReceiveResult::Error) {
-            std::cerr << "Receive failed\n";
-            break;
+        sockaddr_in clientAddr{};
+        socklen_t clientLen = sizeof(clientAddr);
+        int clientfd = accept(serverfd_, (sockaddr*)&clientAddr, &clientLen);
+        if (clientfd < 0) {
+            std::cerr << "Client accept failed\n";
+            continue;
         }
-        std::cout << "Received: " << clientMessage << "\n";
-        RequestType rqst = parseRequest(clientMessage);
-        std::string reply = handleRequest(rqst);
-        send(clientfd, reply.c_str(), reply.size(), 0);
+        ClientSession clientSession(clientfd, clientAddr);
+        clientSession.run();
     }
-    close(clientfd);
-}
-
-TcpServer::ReceiveResult TcpServer::receiveMessage(int clientfd, std::string& out) {
-    char buffer[1024] = {0};
-    int bytesReceived = recv(clientfd, buffer, sizeof(buffer), 0);
-    if (bytesReceived == 0) {
-        return ReceiveResult::Disconnect;
-    } else if (bytesReceived < 0) {
-        return ReceiveResult::Error;
-    }
-    out.assign(buffer, bytesReceived);
-    return ReceiveResult::Message;
 }
